@@ -22,7 +22,7 @@ deploy:
   distributions: sdist bdist_wheel
   user: Ledenel
   password:
-    secure: PLEASE_REPLACE_ME
+    secure: m14kG63yF/jfdXlKuDccNL4nVrVmWCc1vmT83ykU5ZVetVzNAGWSIUons0V1cIzQhnI5THPkdEzdPot53z3hdHE03l/f4ELtHjk+r6faWV3wohSw21PP76MQniS2d6/MkM8GjOCLtrH6BI5BejRg7j5xBqmoCUQgxXOsNlZ6JORqqk7xv8Dkav+Q/S69PNw36KossN3ZIW4wgweAW2b9oqOisA1i5jhMN+Uv7vCI5k38eJzzb6IUk52xtcXVJ59gHj8gGCSRXaH6opmS7txEYqqfEENsAh9sHNR/QfMka1RiZxHt4sCq843czFEfxOKwWJEjwOBRuGl2HrIYUcwk+02yQ3kFcxf/oNvC86Zd6108vvtpCnyUYl0vfwxAljTRLgblmnY6dmP3p+ZKseIGm2n4fzOv0+oin831iDtYVNk2MiIH+zoc9RpW4PA6ClEZkuGvEihvJcL2XvWBZD2pYUpI7gk4BuF4L/fBK0Dh1CzWM41itbyY16PT4Niik9bnqFVcKh9kU2sz++bYjUWugeYNwqBZvsF7pjyArsy+510wiF7Cv2oIr3ZBL4nDE6Xg9V2ehgW9LItrYKUO0b5dgBaiRYoy05RLWsk0NTFYA0LVlddNiGuHf4MZfuAL5gvqY3bbd8lvd+Y81JBe5i8SqRwfqfivRtQlS6YosRxhawM=
   on:
     tags: true
     repo: Ledenel/fdf
