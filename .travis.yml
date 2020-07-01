@@ -1,28 +1,17 @@
-# Config file for automatic testing at travis-ci.com
-
 language: python
 python:
-  - 3.8
-  - 3.7
-  - 3.6
-  - 3.5
-
-# Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+- 3.8
+- 3.7
+- 3.6
+- 3.5
 install: pip install -U tox-travis
-
-# Command to run tests, e.g. python setup.py test
 script: tox
-
-# Assuming you have installed the travis-ci CLI tool, after you
-# create the Github repo and add it to Travis, run the
-# following command to finish PyPI deployment setup:
-# $ travis encrypt --add deploy.password
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
-  user: Ledenel
+  username: "__token__"
   password:
-    secure: m14kG63yF/jfdXlKuDccNL4nVrVmWCc1vmT83ykU5ZVetVzNAGWSIUons0V1cIzQhnI5THPkdEzdPot53z3hdHE03l/f4ELtHjk+r6faWV3wohSw21PP76MQniS2d6/MkM8GjOCLtrH6BI5BejRg7j5xBqmoCUQgxXOsNlZ6JORqqk7xv8Dkav+Q/S69PNw36KossN3ZIW4wgweAW2b9oqOisA1i5jhMN+Uv7vCI5k38eJzzb6IUk52xtcXVJ59gHj8gGCSRXaH6opmS7txEYqqfEENsAh9sHNR/QfMka1RiZxHt4sCq843czFEfxOKwWJEjwOBRuGl2HrIYUcwk+02yQ3kFcxf/oNvC86Zd6108vvtpCnyUYl0vfwxAljTRLgblmnY6dmP3p+ZKseIGm2n4fzOv0+oin831iDtYVNk2MiIH+zoc9RpW4PA6ClEZkuGvEihvJcL2XvWBZD2pYUpI7gk4BuF4L/fBK0Dh1CzWM41itbyY16PT4Niik9bnqFVcKh9kU2sz++bYjUWugeYNwqBZvsF7pjyArsy+510wiF7Cv2oIr3ZBL4nDE6Xg9V2ehgW9LItrYKUO0b5dgBaiRYoy05RLWsk0NTFYA0LVlddNiGuHf4MZfuAL5gvqY3bbd8lvd+Y81JBe5i8SqRwfqfivRtQlS6YosRxhawM=
+    secure: SSQHqiPdDectgOO5mwTsIxdPhJBf86OgaHZKmghQPK+c9X5FCOkuAwzWsUrixjEaGJBPI3MaU/Yk8gzFV7aZVXvYQllQghJsgbRWJgF6wmVjIgiVrywYk6p/Sa7VLB/izO6qudgsV4Qr3IDN/zrsYYhRBUZ9eTAFGtuUy1VTICIirPS3deAvBlSMLLI4vMGDhZz1wYkm0h70xNkFTvfsDhKEo6PeSUF8ID2l9z/ok+yo8X4EAVjw81MMFv82itKfHISjvadORV91hSrnZ8W/VSmW+P96/+TFiProk8WmQOq/PwrpmW/7ehd9LT8Vrh7ifx/lFxnyuraC+lRLwKPIsqY3cfmQGrEO7WdtyMVDrEleYFUKm4Y9nI5qtUxbUndiqHr5QE1L6BMcgqhFh1vNuM82wEPZbLwGEMPwAa1M8+USLEagqy9UWAVKzdAFNg1kv4NZ/UeBmkSVQMmdhPfmDw2qjQZJGPsXD2AEQr+odzOX3o3VXdZCiMw0jl5T/QY+ZSJHb8cvzxXe7lbEmpeflbf88fpCkk6oMhckcYY1+QZhSz44tzCLRoLEBiVq5TqmvmJg6ZF7EtVdpxGYbgMLRI6EnWCTsJJeTmVWnPA92W1w0uRLkdT1bfWF9krxFYpX/hEcSyxDtgb/lBWkdNs/JCi7gpUqHuQaFweUTQwWnsQ=
   on:
     tags: true
     repo: Ledenel/fdf
