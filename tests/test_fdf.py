@@ -35,3 +35,9 @@ def test_command_line_interface():
     help_result = runner.invoke(cli.main, ['--help'])
     assert help_result.exit_code == 0
     assert '--help  Show this message and exit.' in help_result.output
+
+
+def test_from_path():
+    array_info = fdf.ArrayInfo.from_path("test#%x.__categories__.txt")
+    assert array_info.backend == "txt"
+    assert array_info.ext_chain == ["test--x", "__categories__"]
