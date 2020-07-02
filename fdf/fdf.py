@@ -43,7 +43,7 @@ class MaskTrans(collections.abc.Mapping):
 
 class FileNameInvalidError(Exception):
     def __init__(self, e: pyp.ParseException):
-        super().__init__(pyp.ParseException.explain(e))
+        super().__init__("\n" + pyp.ParseException.explain(e))
 
 
 class ArrayInfo:
@@ -77,7 +77,7 @@ class ArrayInfo:
     def from_path(cls, path: str):
         resolved_path = path.translate(cls.CHARS_FILTER)
         try:
-            results = cls.FILE_NAME.parseString(resolved_path)
+            results = cls.FILE_NAME.parseString(resolved_path, parseAll=True)
         except pyp.ParseException as e:
             raise FileNameInvalidError(e)
         backend = results["backend"]
