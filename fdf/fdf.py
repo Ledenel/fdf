@@ -110,7 +110,7 @@ class FDataFrame:
 
 
 def parse_array_info_tree(array_infos: Iterable[ArrayInfo]):
-    #FIXME: panic while multiple prefixes
+    #FIXME: panic while multiple prefixes appears (means that multiple backends of array are provided.)
     cached_array_infos = {array_info.prefixes: array_info for array_info in array_infos}
     roots = set()
     cache_is_dirty = True
