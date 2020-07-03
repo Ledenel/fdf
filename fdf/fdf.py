@@ -2,7 +2,7 @@
 import collections
 import os
 from glob import glob
-from typing import List, Optional, Iterator
+from typing import List, Optional, Iterator, Iterable
 
 import pyparsing as pyp
 
@@ -60,10 +60,11 @@ class ArrayInfo:
         cls.next_id += 1
         return name
 
-    def __init__(self, backend: str, ext_chain: Optional[List[str]] = None, path=None):
+    def __init__(self, backend: Optional[str], ext_chain: Optional[Iterable[str]] = None, path: str = None):
         self.path = path
-        self.ext_chain = ext_chain or [ArrayInfo.new_name()]
+        self.ext_chain = tuple(ext_chain) or (ArrayInfo.new_name(),)
         self.backend = backend
+        self.children = []
 
     @property
     def array_name(self):
@@ -73,20 +74,62 @@ class ArrayInfo:
     def column_name(self):
         return self.ext_chain[0]
 
+    def __str__(self):
+        return f"{'.'.join(self.ext_chain)}.{self.backend}"
+
+    def __hash__(self):
+        return hash(self._object_view())
+
+    def _object_view(self):
+        unique_view = tuple(self.ext_chain), self.backend, self.path
+        return unique_view
+
+    def __eq__(self, other):
+        return self._object_view() == other._object_view()
+
+    def parent(self):
+        is_child = len(self.ext_chain) > 1
+        return ArrayInfo(backend=None, ext_chain=self.ext_chain[:-1]) if is_child else None
+
     @classmethod
     def from_path(cls, path: str):
         resolved_path = path.translate(cls.CHARS_FILTER)
+        # FIXME: warn when resolved_path is modified.
         try:
             results = cls.FILE_NAME.parseString(resolved_path, parseAll=True)
         except pyp.ParseException as e:
             raise FileNameInvalidError(e)
         backend = results["backend"]
         ext_chain = list(results["ext"])
+        # FIXME: panic when str(arrayInfo) is not resolved_path.
         return cls(backend, ext_chain, path)
 
 
 class FDataFrame:
     pass
+
+
+def parse_array_info_tree(array_infos: Iterable[ArrayInfo]):
+    cached_array_infos = {array_info.ext_chain: array_info for array_info in array_infos}
+    roots = set()
+    cache_is_dirty = True
+    while cache_is_dirty:
+        cache_is_dirty = False
+        for item in list(cached_array_infos.values()):
+            item: ArrayInfo
+            gen_parent = item.parent()
+            if gen_parent is not None:
+                cached_parent = cached_array_infos.get(gen_parent.ext_chain, None)
+                if cached_parent is not None:
+                    cached_parent.children.append(item)
+                else:
+                    cached_array_infos[gen_parent.ext_chain] = gen_parent
+                    cache_is_dirty = True
+            else:
+                roots.add(item)
+    root_list = list(roots)
+    root_list.sort(key=lambda array_info: array_info.column_name)
+    return root_list
 
 
 def parse(fdf_dir):
