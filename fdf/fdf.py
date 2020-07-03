@@ -60,36 +60,36 @@ class ArrayInfo:
         cls.next_id += 1
         return name
 
-    def __init__(self, backend: Optional[str], ext_chain: Optional[Iterable[str]] = None, path: str = None):
+    def __init__(self, backend: Optional[str], prefixes: Optional[Iterable[str]] = None, path: str = None):
         self.path = path
-        self.ext_chain = tuple(ext_chain) or (ArrayInfo.new_name(),)
+        self.prefixes = tuple(prefixes) or (ArrayInfo.new_name(),)
         self.backend = backend
         self.children = []
 
     @property
     def array_name(self):
-        return self.ext_chain[-1]
+        return self.prefixes[-1]
 
     @property
     def column_name(self):
-        return self.ext_chain[0]
+        return self.prefixes[0]
 
     def __str__(self):
-        return f"{'.'.join(self.ext_chain)}.{self.backend}"
+        return f"{'.'.join(self.prefixes)}.{self.backend}"
 
     def __hash__(self):
         return hash(self._object_view())
 
     def _object_view(self):
-        unique_view = tuple(self.ext_chain), self.backend, self.path
+        unique_view = tuple(self.prefixes), self.backend, self.path
         return unique_view
 
     def __eq__(self, other):
         return self._object_view() == other._object_view()
 
     def parent(self):
-        is_child = len(self.ext_chain) > 1
-        return ArrayInfo(backend=None, ext_chain=self.ext_chain[:-1]) if is_child else None
+        is_child = len(self.prefixes) > 1
+        return ArrayInfo(backend=None, prefixes=self.prefixes[:-1]) if is_child else None
 
     @classmethod
     def from_path(cls, path: str):
@@ -100,9 +100,9 @@ class ArrayInfo:
         except pyp.ParseException as e:
             raise FileNameInvalidError(e)
         backend = results["backend"]
-        ext_chain = list(results["ext"])
+        prefixes = list(results["ext"])
         # FIXME: panic when str(arrayInfo) is not resolved_path.
-        return cls(backend, ext_chain, path)
+        return cls(backend, prefixes, path)
 
 
 class FDataFrame:
@@ -110,7 +110,8 @@ class FDataFrame:
 
 
 def parse_array_info_tree(array_infos: Iterable[ArrayInfo]):
-    cached_array_infos = {array_info.ext_chain: array_info for array_info in array_infos}
+    #FIXME: panic while multiple prefixes
+    cached_array_infos = {array_info.prefixes: array_info for array_info in array_infos}
     roots = set()
     cache_is_dirty = True
     while cache_is_dirty:
@@ -119,11 +120,11 @@ def parse_array_info_tree(array_infos: Iterable[ArrayInfo]):
             item: ArrayInfo
             gen_parent = item.parent()
             if gen_parent is not None:
-                cached_parent = cached_array_infos.get(gen_parent.ext_chain, None)
+                cached_parent = cached_array_infos.get(gen_parent.prefixes, None)
                 if cached_parent is not None:
                     cached_parent.children.append(item)
                 else:
-                    cached_array_infos[gen_parent.ext_chain] = gen_parent
+                    cached_array_infos[gen_parent.prefixes] = gen_parent
                     cache_is_dirty = True
             else:
                 roots.add(item)
