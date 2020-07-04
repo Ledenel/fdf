@@ -22,14 +22,14 @@ class ExtArray:
         return self._array[item]
 
 
-class MaskTrans(collections.abc.Mapping):
+class WhiteListFilter(collections.abc.Mapping):
     MAX_LEN = 65535
 
     def __len__(self) -> int:
-        return MaskTrans.MAX_LEN - len(self.valid_chars)
+        return WhiteListFilter.MAX_LEN - len(self.valid_chars)
 
     def __iter__(self) -> Iterator[int]:
-        return iter(set(range(MaskTrans.MAX_LEN)) - self.valid_chars)
+        return iter(set(range(WhiteListFilter.MAX_LEN)) - self.valid_chars)
 
     def __init__(self, valid_chars: str, replaced_by: str):
         self.replaced_by = replaced_by
@@ -52,7 +52,7 @@ class ArrayInfo:
     ext_chars = pyp.alphanums + "-_"
     EXTNAME = pyp.Word(ext_chars).setResultsName("ext", listAllMatches=True)
     FILE_NAME = pyp.OneOrMore(EXTNAME + ".") + BACKEND
-    CHARS_FILTER = MaskTrans(valid_chars=ext_chars + ".", replaced_by="-")
+    CHARS_FILTER = WhiteListFilter(valid_chars=ext_chars + ".", replaced_by="-")
 
     @classmethod
     def new_name(cls):
@@ -64,7 +64,7 @@ class ArrayInfo:
         self.path = path
         self.prefixes = tuple(prefixes) or (ArrayInfo.new_name(),)
         self.backend = backend
-        self.children = []
+        self.children: List[ArrayInfo] = []
 
     @property
     def array_name(self):
