@@ -16,9 +16,10 @@ class Singleton(object):
 
 class ArrayParser(Singleton):
     def init(self):
-        self.backend_reader = {
+        self.backend = {
             "txt": None,
             "npy": None,
+            "empty": None,
         }
         self.row_parser = {
             "__block__": None,
@@ -26,6 +27,7 @@ class ArrayParser(Singleton):
         self.column_transformer = {
             "__categories__": None,
             "__tokenize__": None,
+            "__ref__": None,
             "__transform__": None,
         }
         self.array_extensions = {
