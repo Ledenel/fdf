@@ -10,7 +10,7 @@ fdf
         :target: https://travis-ci.com/Ledenel/fdf
 
 .. image:: https://readthedocs.org/projects/fdf/badge/?version=latest
-        :target: https://fdf.readthedocs.io/en/latest/?badge=latest
+        :target: https://fdf-doc.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
 
@@ -24,7 +24,7 @@ File-system based Data Frame: manipulate self-explanatory dataset without writin
 
 
 * Free software: MIT license
-* Documentation: https://fdf.readthedocs.io.
+* Documentation: https://fdf-doc.readthedocs.io.
 
 
 Features
