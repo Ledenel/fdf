@@ -40,4 +40,4 @@ def test_command_line_interface():
 def test_from_path():
     array_info = fdf.ArrayInfo.from_path("test#%x.__categories__.txt")
     assert array_info.backend == "txt"
-    assert array_info.ext_chain == ["test--x", "__categories__"]
+    assert array_info.prefixes == ("test--x", "__categories__")
