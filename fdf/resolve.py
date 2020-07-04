@@ -1,6 +1,6 @@
 from fdf.fdf import ArrayInfo
 
-
+# copied from https://www.python.org/download/releases/2.2/descrintro/#__new__
 class Singleton(object):
     def __new__(cls, *args, **kwds):
         it = cls.__dict__.get("__it__")
