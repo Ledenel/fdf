@@ -39,7 +39,7 @@ class ArrayParser(Singleton):
             if sub_info.array_name in self.column_transformer:
                 transformers.append(sub_info.array_name)
         # TODO: refactor to raise ArrayFileNameSyntaxError
-        assert len(transformers <= 1), f"Cannot apply multiple column-transformer {transformers} to " \
+        assert len(transformers) <= 1, f"Cannot apply multiple column-transformer {transformers} to " \
                                        f"column {array_info} "
 
     def parse(self, array_info: ArrayInfo):
