@@ -41,6 +41,7 @@ class ArrayParser(Singleton):
             "__categories__": None,
             "__tokenize__": None,
             "__ref__": None,
+            "__reindex__": None,
             "__transform__": None,
         }
         self.array_extensions = {
