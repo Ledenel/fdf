@@ -1,4 +1,7 @@
+import numpy
+
 from fdf.fdf import ArrayInfo
+
 
 # copied from https://www.python.org/download/releases/2.2/descrintro/#__new__
 class Singleton(object):
@@ -14,10 +17,20 @@ class Singleton(object):
         pass
 
 
+class TxtBackend(Singleton):
+    def load(self, path):
+        with open(path, "r") as f:
+            return numpy.array([line for line in f])
+
+    def dump(self, path, array):
+        with open(path, "w") as f:
+            f.writelines(str(item) for item in array)
+
+
 class ArrayParser(Singleton):
     def init(self):
         self.backend = {
-            "txt": None,
+            "txt": TxtBackend,
             "npy": None,
             "empty": None,
         }
