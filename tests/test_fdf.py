@@ -41,3 +41,9 @@ def test_from_path():
     array_info = fdf.ArrayInfo.from_path("test#%x.__categories__.txt")
     assert array_info.backend == "txt"
     assert array_info.prefixes == ("test--x", "__categories__")
+
+def test_from_gz_path():
+    array_info = fdf.ArrayInfo.from_path("test#%x.__categories__.txt.gz")
+    assert array_info.backend == "txt"
+    assert array_info.compression == "gz"
+    assert array_info.prefixes == ("test--x", "__categories__")

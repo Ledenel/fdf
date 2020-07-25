@@ -48,10 +48,10 @@ class FileNameInvalidError(Exception):
 
 class ArrayInfo:
     next_id = 1
-    BACKEND = pyp.Word(pyp.alphanums).setResultsName("backend")
+    EXTENSION = pyp.Word(pyp.alphanums).setResultsName("backend")
     ext_chars = pyp.alphanums + "-_"
     EXTNAME = pyp.Word(ext_chars).setResultsName("ext", listAllMatches=True)
-    FILE_NAME = pyp.OneOrMore(EXTNAME + ".") + BACKEND
+    FILE_NAME = pyp.OneOrMore(EXTNAME + ".") + EXTENSION
     CHARS_FILTER = WhiteListFilter(valid_chars=ext_chars + ".", replaced_by="-")
 
     @classmethod
@@ -60,7 +60,8 @@ class ArrayInfo:
         cls.next_id += 1
         return name
 
-    def __init__(self, backend: Optional[str], prefixes: Optional[Iterable[str]] = None, path: str = None):
+    def __init__(self, backend: Optional[str], compression: Optional[str]=None, prefixes: Optional[Iterable[str]] = None, path: str = None):
+        self.compression = compression
         self.path = path
         self.prefixes = tuple(prefixes) or (ArrayInfo.new_name(),)
         self.backend = backend
@@ -101,8 +102,13 @@ class ArrayInfo:
             raise FileNameInvalidError(e)
         backend = results["backend"]
         prefixes = list(results["ext"])
+        if backend in {"gz", "bz2", "lzma"}:
+            compression = backend
+            prefixes, backend = prefixes[:-1], prefixes[-1]
+        else:
+            compression = None
         # FIXME: panic when str(arrayInfo) is not resolved_path.
-        return cls(backend, prefixes, path)
+        return cls(backend, compression, prefixes, path)
 
 
 class FDataFrame:
