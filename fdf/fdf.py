@@ -60,7 +60,12 @@ class ArrayInfo:
         cls.next_id += 1
         return name
 
-    def __init__(self, backend: Optional[str], compression: Optional[str]=None, prefixes: Optional[Iterable[str]] = None, path: str = None):
+    def __init__(self, backend: Optional[str],
+                 compression: Optional[str]=None,
+                 prefixes: Optional[Iterable[str]] = None,
+                 path: str = None,
+                 data = None):
+        self.data = data
         self.compression = compression
         self.path = path
         self.prefixes = tuple(prefixes) or (ArrayInfo.new_name(),)
@@ -71,12 +76,18 @@ class ArrayInfo:
     def array_name(self):
         return self.prefixes[-1]
 
+    def move_to(self, directory):
+        self.path = os.path.join(directory, str(self))
+        return self
+
     @property
     def column_name(self):
         return self.prefixes[0]
 
     def __str__(self):
-        return f"{'.'.join(self.prefixes)}.{self.backend}"
+        none_else = "." + self.compression if self.compression is not None else ""
+        else_ = f"{'.'.join(self.prefixes)}.{self.backend}{none_else}"
+        return else_
 
     def __hash__(self):
         return hash(self._object_view())
@@ -91,6 +102,16 @@ class ArrayInfo:
     def parent(self):
         is_child = len(self.prefixes) > 1
         return ArrayInfo(backend=None, prefixes=self.prefixes[:-1]) if is_child else None
+
+    def new_child(self, array_name, backend=None, compression=None, data=None):
+        child = ArrayInfo(
+            backend,
+            compression,
+            self.prefixes + (array_name,),
+            data=data
+        )
+        self.children.append(child)
+        return child
 
     @classmethod
     def from_path(cls, path: str):
