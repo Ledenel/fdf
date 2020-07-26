@@ -34,23 +34,29 @@ class NoCompress:
     @functools.wraps(open)
     def open(self, *args, **kwargs):
         return open(*args, **kwargs)
+
     @classmethod
     def compress(self, data, compresslevel=9):
         return data
+
     @classmethod
     def decompress(self, data):
         return data
+
 
 class MemoryMapCompress:
     @functools.wraps(pyarrow.memory_map)
     def open(self, *args, **kwargs):
         return pyarrow.memory_map(*args, **kwargs)
+
     @classmethod
     def compress(self, data, compresslevel=9):
         return data
+
     @classmethod
     def decompress(self, data):
         return data
+
 
 class CompressFactory(Singleton):
     def init(self):
@@ -85,6 +91,7 @@ class TxtBackend(Backend):
         with pyarrow.output_stream(f) as f:
             f.writelines(repr(item) for item in array)
 
+
 class JsonBackend(Backend):
     def load(self, f, encoding="utf-8"):
         f = io.TextIOWrapper(f, encoding=encoding)
@@ -104,7 +111,6 @@ class ArrowBufferBackend(Backend):
     def dump(self, f, buffer_like):
         with pyarrow.output_stream(f) as out_f:
             out_f.write(buffer_like)
-
 
 
 def not_implemented(*args, **kwargs):
@@ -170,14 +176,16 @@ class ArrayTransformer:
     def __call__(self, parent_array):
         pass
 
+
 _MAP_TO_FACTORY = {
     "fixed_size_binary": "binary"
 }
 
 import pyparsing as pyp
 
+
 def arrow_type_to_dict(t: pyarrow.DataType):
-    ctor, args = re.match(r"^([a-zA-Z0-9]+)(\[(.*?)\])?$", str(t)).groups()
+    ctor, _, args = re.match(r"^([a-zA-Z0-9]+)(\[(.*?)\])?$", str(t)).groups()
     if ctor in {'timestamp'}:
         t: pyarrow.lib.TimestampType
         args = [t.unit, t.tz]
@@ -189,28 +197,27 @@ def arrow_type_to_dict(t: pyarrow.DataType):
         ctor = _MAP_TO_FACTORY[ctor]
     return {"name": ctor, "args": args}
 
+
 class ArrowExtractor(Singleton):
     def __init__(self, directory):
         self.directory = directory
         self.field_order = {
             2: ["null", "data"],
-            3: ["null", "offset",  "data"],
+            3: ["null", "offset", "data"],
         }
 
     def schedule(self, array: pyarrow.Array, info: ArrayInfo):
-        if array.type.num_children == 0 and str(array.type) != "directory": #primitive, contains null_bitmap, data
+        if array.type.num_children == 0 and str(array.type) != "directory":  # primitive, contains null_bitmap, data
             array_meta = info.new_child("__arrow_array__")
             field_orders = self.field_order[array.type.num_buffers]
             for name, buffer in zip(field_orders, array.buffers()):
                 array_meta.new_child("values",
                                      backend="buffer",
                                      compression="mmap",
-                                     data=buffer).move_to(                    self.directory)
+                                     data=buffer).move_to(self.directory)
             array_meta.new_child("metadata", backend="json", data={
-                **arrow_type_to_dict(array.type), #type, args,
-                "field_order": field_orders  #field_order
+                **arrow_type_to_dict(array.type),  # type, args,
+                "field_order": field_orders  # field_order
             }).move_to(self.directory)
             return info
         raise NotImplementedError()
-
-
